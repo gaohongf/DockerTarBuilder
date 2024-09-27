@@ -19,7 +19,6 @@ on:
       result_name:
         description: '最后存放的镜像名称'
         required: true
-        default: "${docker_image}"
 
 jobs:
   pull_and_package:
