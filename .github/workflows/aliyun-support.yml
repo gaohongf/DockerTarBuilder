@@ -1,0 +1,36 @@
+on:
+  workflow_dispatch:
+    inputs:
+      aliyun_username:
+        description: '阿里云用户名'
+        required: true
+      aliyun_password:
+        description: '阿里云镜像仓库密码'
+        required: true
+      aliyun_docker_registry_url:
+        description: '阿里云镜像仓库地址'
+        required: true
+      aliyun_docker_registry_namespace:
+        description: '阿里云镜像仓库命名空间'
+        required: true
+      docker_images:
+        description: '请填写docker镜像名称 多个用英文逗号分开'
+        required: true
+
+jobs:
+  pull_and_package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull Docker Images and Package
+        run: |
+          docker login --username="${{ github.event.inputs.aliyun_username }}" "${{ github.event.inputs.aliyun_docker_registry_url }}" --password="${{ github.event.inputs.aliyun_password }}"
+          images="${{ github.event.inputs.docker_images }}"
+          IFS=',' read -r -a image_array <<< "$images"
+          for image in "${image_array[@]}"; do
+            docker pull "${image}"
+            docker tag "${image}" "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${image}"
+            docker push "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${image}"
+          done
