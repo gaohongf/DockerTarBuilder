@@ -13,9 +13,13 @@ on:
       aliyun_docker_registry_namespace:
         description: '阿里云镜像仓库命名空间'
         required: true
-      docker_images:
-        description: '请填写docker镜像名称 多个用英文逗号分开'
+      docker_image:
+        description: '请填写docker镜像名称'
         required: true
+      result_name:
+        description: '最后存放的镜像名称'
+        required: true
+        default: "${docker_image}"
 
 jobs:
   pull_and_package:
@@ -27,10 +31,7 @@ jobs:
       - name: Pull Docker Images and Package
         run: |
           docker login --username="${{ github.event.inputs.aliyun_username }}" "${{ github.event.inputs.aliyun_docker_registry_url }}" --password="${{ github.event.inputs.aliyun_password }}"
-          images="${{ github.event.inputs.docker_images }}"
-          IFS=',' read -r -a image_array <<< "$images"
-          for image in "${image_array[@]}"; do
-            docker pull "${image}"
-            docker tag "${image}" "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${image}"
-            docker push "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${image}"
-          done
+          image="${{ github.event.inputs.docker_image }}"
+          docker pull "${image}"
+          docker tag "${image}" "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${github.event.inputs.result_name}"
+          docker push "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${github.event.inputs.result_name}"
