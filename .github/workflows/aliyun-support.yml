@@ -32,5 +32,5 @@ jobs:
           docker login --username="${{ github.event.inputs.aliyun_username }}" "${{ github.event.inputs.aliyun_docker_registry_url }}" --password="${{ github.event.inputs.aliyun_password }}"
           image="${{ github.event.inputs.docker_image }}"
           docker pull "${image}"
-          docker tag "${image}" "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${github.event.inputs.result_name}"
-          docker push "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${github.event.inputs.result_name}"
+          docker tag "${image}" "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${{ github.event.inputs.result_name }}"
+          docker push "${{ github.event.inputs.aliyun_docker_registry_url }}/${{ github.event.inputs.aliyun_docker_registry_namespace }}/${{ github.event.inputs.result_name }}"
